@@ -19,4 +19,5 @@ contract Arks is ERC721Connector {
        _mint(msg.sender, _id);
        _arksExists[_arks] = true;
     }
+
 }

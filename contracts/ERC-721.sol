@@ -17,7 +17,7 @@ contract ERC721 {
       return owner != address(0);
     }
 
-    function _mint(address to, uint256 tokenId) internal {
+    function _mint(address to, uint256 tokenId) internal virtual {
        require(to != address(0), 'ERC721: miniting to the zero address');
        require(!_exists(tokenId), 'Token Already Minted');
        tokensOwner[tokenId] = to;
@@ -25,4 +25,12 @@ contract ERC721 {
        
        emit Transfer(address(0), to, tokenId); 
     } 
+    function balanceOf(address _owner) public view returns(uint256) {
+        require(_owner != address(0), "Invalid Owner Detail");
+        return tokensOwnedCount[_owner];
+    }
+    function ownerOf(uint256 _tokenID) public view returns (address) {
+        address owner = tokensOwner[_tokenID];
+        return owner;
+    }
 }
