@@ -19,14 +19,32 @@ pragma solidity ^0.8.13;
 
     function _mint(address _to, uint256 tokenID) internal override(ERC721) {
         super._mint(_to, tokenID);
-        addTokenToTotalSupply(tokenID);
+        addTokenToAllTokensEnumeration(tokenID);
+        addTokenToOwnerEnumeration(_to, tokenID);
     }
 
-    function addTokenToTotalSupply(uint256 tokenID) private {
+    function addTokenToAllTokensEnumeration(uint256 tokenID) private {
+       _allTokensIndex[tokenID] = __allTokens.length;
        __allTokens.push(tokenID);
     }
 
-    function totalSuppy() external view returns(uint256) {
+    function addTokenToOwnerEnumeration(address to, uint256 tokenID) private {
+        _ownedTokensIndex[tokenID] = _ownedTokens[to].length; 
+        _ownedTokens[to].push(tokenID); 
+    }
+    
+    function tokenByIndex(uint index) public view returns (uint256) {
+        require(index < totalSupply(), "Global!, Index Out Of Bound" );
+        return __allTokens[index];
+    }
+
+    function tokenOfOwnerByIndex(address owner, uint index) public view returns(uint256) {
+        require(index < balanceOf(owner), 'Owner index out of bound');
+        return _ownedTokens[owner][index];
+    }
+
+    function totalSupply() public view returns(uint256) {
+
         return __allTokens.length;
     }
 }
