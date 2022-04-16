@@ -1,8 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
+import './ERC-165.sol';
+import './interface/IERC-721.sol';
 
-contract ERC721 {
+contract ERC721  is ERC165, IERC721 {
 
     event Transfer (
         address indexed from,
@@ -25,12 +27,32 @@ contract ERC721 {
        
        emit Transfer(address(0), to, tokenId); 
     } 
-    function balanceOf(address _owner) public view returns(uint256) {
+
+    function _transferFrom(address _to, address _from, uint256 _tokenID) internal {
+        require(_to == address(0), "Trying to transfer to zero address");
+        require(ownerOf(_tokenID) == _from, "Trying to transfer a token that doesn't belong to you");
+        tokensOwnedCount[_from] -= 1;
+        tokensOwnedCount[_to] += 1;
+        tokensOwner[_tokenID] = _to;
+        emit Transfer(_from, _to, _tokenID);
+    }
+
+    function transferFrom(address to, address from, uint256 tokenID) public override payable  {
+        _transferFrom(to, from, tokenID);
+    }
+
+    function balanceOf(address _owner) public override view returns(uint256) {
         require(_owner != address(0), "Invalid Owner Detail");
         return tokensOwnedCount[_owner];
     }
-    function ownerOf(uint256 _tokenID) public view returns (address) {
+    function ownerOf(uint256 _tokenID) public override view returns (address) {
         address owner = tokensOwner[_tokenID];
         return owner;
     }
+
+    constructor() {
+        _registerInterface(bytes4(keccak256('transferFrom(address, address, uint256)') 
+                                             ^ keccak256('balanceOf(address)') 
+                                             ^ keccak256('ownerOf(uint256)')));
+    } 
 }
