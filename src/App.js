@@ -21,14 +21,7 @@ class App extends Component {
   }
 
   async loadWeb3() {
-    const provider = await detectEthereumProvider();
-
-    if ( provider) {
-      console.log('Connected');
-      window.web3 = new Web3(provider);
-    } else {
-      console.log('Not Connected'); 
-    }
+      window.web3 = new Web3('https://data-seed-prebsc-1-s1.binance.org:8545');
 }
 
   async blockchainData() {
@@ -110,7 +103,7 @@ constructor(props) {
               <div className='content mr-auto ml-auto'
               style={{opacity:'0.8'}}>
                 <h1 style={{color:'black'}}>
-                   Arkate - A NFT Marketplace 
+                   Arkate - An NFT Marketplace 
                    {console.log(this.state.arks)}  
                 </h1>
                 <form onSubmit={(event) => {
